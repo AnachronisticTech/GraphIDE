@@ -1,11 +1,11 @@
-import { readdir } from 'fs/promises';
-import { readFileSync } from 'fs';
+import { readdir } from "fs/promises";
+import { readFileSync } from "fs";
 const javaMethodParser = require("./JAVA_PARSER.js");
 
 class BaseAnalyzer {
     protected static async getFilePathsFromSourceDirectory(
         directory: string,
-        callback: (string) => void
+        callback: (_: string[]) => void
     ) {
         const files = await readdir(directory)
         callback(files.map(fileName => `${directory}/${fileName}`))
@@ -23,7 +23,7 @@ class BaseAnalyzer {
 
     static analyzeDirectory(
         directory: string,
-        parseOperation: (string) => void = function(_) {}
+        parseOperation: (_: string) => void = function(_) {}
     ) {
         this.getFilePathsFromSourceDirectory(directory, filePaths => {
             for (let filePath of filePaths) {
