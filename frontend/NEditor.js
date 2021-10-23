@@ -23,7 +23,7 @@ NEditor.offsetX = 0; //OffsetX for dragging nodes
 NEditor.offsetY = 0; //OffsetY for dragging nodes
 NEditor.svg = null; //SVG where the line paths are drawn.
 
-NEditor.pathColor = "#999999";
+NEditor.pathColor = "#ff0000";
 NEditor.pathColorA = "#86d530";
 NEditor.pathWidth = 2;
 NEditor.pathDashArray = "20,5,5,5,5,5";
