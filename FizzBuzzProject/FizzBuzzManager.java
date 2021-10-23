@@ -1,5 +1,4 @@
 package FizzBuzzProject;
-import java.util.List;
 import java.util.ArrayList;
 
 public class FizzBuzzManager {
@@ -7,18 +6,18 @@ public class FizzBuzzManager {
 
     }
 
-    public List<Integer> go(int from, int to) {
-        List<Integer> list = new ArrayList<>();
+    public ArrayList<Integer> go(int from, int to) {
+        ArrayList<Integer> list = new ArrayList<>();
         for(int i = from; i <= to; i++) {
             if(i % 3 == 0 && i % 5 == 0 && i % 15 != 0) {
-                list.add(i);
+                list.add(list.add(1),list.add(2)));
             }
         }
         return list;
     }
 
     public String[] whatever(String args){
-        System.out.println(":(");
+        System.out.println(":a(");
         return null;
     }
 }
