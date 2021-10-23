@@ -87,7 +87,7 @@ def get_function_call_or_declaration(line):
     
     return None, None
 
-directory = "/Users/justinreed/Documents/Mine/Programming/Projects_with_Daniel/GraphIDE/GraphIDE/FizzBuzzProject/"
+directory = "C:/Users/Jorel/Documents/GitHub/GraphIDE/FizzBuzzProject/"
 
 file_path = directory+"FizzBuzz.java"
 

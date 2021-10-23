@@ -16,191 +16,194 @@ function escapeHtml(unsafe) {
 //Main Static Object
 //###########################################################################
 
-var NEditor = {};
-NEditor.dragMode = 0;
-NEditor.dragItem = null; //reference to the dragging item
-NEditor.startPos = null; //Used for starting position of dragging lines
-NEditor.offsetX = 0; //OffsetX for dragging nodes
-NEditor.offsetY = 0; //OffsetY for dragging nodes
-NEditor.svg = null; //SVG where the line paths are drawn.
+const NEditor = {
 
-NEditor.pathColor = "#999999";
-NEditor.pathColorA = "#86d530";
-NEditor.pathWidth = 2;
-NEditor.pathDashArray = "20,5,5,5,5,5";
+    dragMode: 0,
+    dragItem: null, //reference to the dragging item
+    startPos: null, //Used for starting position of dragging lines
+    offsetX: 0, //OffsetX for dragging nodes
+    offsetY: 0, //OffsetY for dragging nodes
+    svg: null, //SVG where the line paths are drawn.
 
-NEditor.init = function() {
-    NEditor.svg = document.getElementById("connsvg");
-    NEditor.svg.ns = NEditor.svg.namespaceURI;
-};
+    pathColor: "#999999",
+    pathColorA: "#86d530",
+    pathWidth: 2,
+    pathDashArray: "20,5,5,5,5,5",
 
-/*--------------------------------------------------------
-Global Function */
+    init: function() {
+        NEditor.svg = document.getElementById("connsvg");
+        NEditor.svg.ns = NEditor.svg.namespaceURI;
+    },
 
-//Trail up the parent nodes to get the X,Y position of an element
-NEditor.getOffset = function(elm) {
-    var pos = { x: 0, y: 0 };
-    while (elm) {
-        pos.x += elm.offsetLeft;
-        pos.y += elm.offsetTop;
-        elm = elm.offsetParent;
-    }
-    return pos;
-};
+    /*--------------------------------------------------------
+    Global Function */
 
-//Gets the position of one of the connection points
-NEditor.getConnPos = function(elm) {
-    var pos = NEditor.getOffset(elm);
-    pos.x += elm.offsetWidth / 2 + 1.5; //Add some offset so its centers on the element
-    pos.y += elm.offsetHeight / 2 + 0.5;
-    return pos;
-};
+    //Trail up the parent nodes to get the X,Y position of an element
+    getOffset: function(elm) {
+        var pos = { x: 0, y: 0 };
+        while (elm) {
+            pos.x += elm.offsetLeft;
+            pos.y += elm.offsetTop;
+            elm = elm.offsetParent;
+        }
+        return pos;
+    },
 
-//Used to reset the svg path between two nodes
-NEditor.updateConnPath = function(o) {
-    var pos1 = o.output.getPos(),
-        pos2 = o.input.getPos();
-    NEditor.setQCurveD(o.path, pos1.x, pos1.y, pos2.x, pos2.y);
-};
+    //Gets the position of one of the connection points
+    getConnPos: function(elm) {
+        var pos = NEditor.getOffset(elm);
+        pos.x += elm.offsetWidth / 2 + 1.5; //Add some offset so its centers on the element
+        pos.y += elm.offsetHeight / 2 + 0.5;
+        return pos;
+    },
 
-//Creates an Quadratic Curve path in SVG
-NEditor.createQCurve = function(x1, y1, x2, y2) {
-    var elm = document.createElementNS(NEditor.svg.ns, "path");
-    elm.setAttribute("fill", "none");
-    elm.setAttribute("stroke", NEditor.pathColor);
-    elm.setAttribute("stroke-width", NEditor.pathWidth);
-    elm.setAttribute("stroke-dasharray", NEditor.pathDashArray);
+    //Used to reset the svg path between two nodes
+    updateConnPath: function(o) {
+        var pos1 = o.output.getPos(),
+            pos2 = o.input.getPos();
+        NEditor.setQCurveD(o.path, pos1.x, pos1.y, pos2.x, pos2.y);
+    },
 
-    NEditor.setQCurveD(elm, x1, y1, x2, y2);
-    return elm;
-};
+    //Creates an Quadratic Curve path in SVG
+    createQCurve: function(x1, y1, x2, y2) {
+        var elm = document.createElementNS(NEditor.svg.ns, "path");
+        elm.setAttribute("fill", "none");
+        elm.setAttribute("stroke", NEditor.pathColor);
+        elm.setAttribute("stroke-width", NEditor.pathWidth);
+        elm.setAttribute("stroke-dasharray", NEditor.pathDashArray);
 
-//This is seperated from the create so it can be reused as a way to update an existing path without duplicating code.
-NEditor.setQCurveD = function(elm, x1, y1, x2, y2) {
-    var dif = Math.abs(x1 - x2) / 1.5,
-        str =
-        "M" + x1 + "," + y1 + " C" + /* MoveTo */ (x1 + dif) + "," + y1 + " " + /* First Control Point */ (x2 - dif) + "," + y2 + " " + /* Second Control Point */ x2 + "," + y2; /* End Point */
+        NEditor.setQCurveD(elm, x1, y1, x2, y2);
+        return elm;
+    },
 
-    elm.setAttribute("d", str);
-};
+    //This is seperated from the create so it can be reused as a way to update an existing path without duplicating code.
+    setQCurveD: function(elm, x1, y1, x2, y2) {
+        var dif = Math.abs(x1 - x2) / 1.5,
+            str =
+            "M" + x1 + "," + y1 + " C" + /* MoveTo */ (x1 + dif) + "," + y1 + " " + /* First Control Point */ (x2 - dif) + "," + y2 + " " + /* Second Control Point */ x2 + "," + y2; /* End Point */
 
-NEditor.setCurveColor = function(elm, isActive) {
-    elm.setAttribute("stroke", isActive ? NEditor.pathColorA : NEditor.pathColor);
-};
+        elm.setAttribute("d", str);
+    },
 
-/*Unused function at the moment, it creates a straight line
-NEditor.createline = function (x1, y1, x2, y2, color, w) {
-	var line = document.createElementNS(NEditor.svg.ns, 'line');
-	line.setAttribute('x1', x1);
-	line.setAttribute('y1', y1);
-	line.setAttribute('x2', x2);
-	line.setAttribute('y2', y2);
-	line.setAttribute('stroke', color);
-	line.setAttribute('stroke-width', w);
-	return line;
-}*/
+    setCurveColor: function(elm, isActive) {
+        elm.setAttribute("stroke", isActive ? NEditor.pathColorA : NEditor.pathColor);
+    },
 
-/*--------------------------------------------------------
-Dragging Nodes */
-NEditor.beginNodeDrag = function(n, x, y) {
-    if (NEditor.dragMode != 0) return;
+    /*Unused function at the moment, it creates a straight line
+    NEditor.createline = function (x1, y1, x2, y2, color, w) {
+    	var line = document.createElementNS(NEditor.svg.ns, 'line');
+    	line.setAttribute('x1', x1);
+    	line.setAttribute('y1', y1);
+    	line.setAttribute('x2', x2);
+    	line.setAttribute('y2', y2);
+    	line.setAttribute('stroke', color);
+    	line.setAttribute('stroke-width', w);
+    	return line;
+    }*/
 
-    NEditor.dragMode = 1;
-    NEditor.dragItem = n;
-    this.offsetX = n.offsetLeft - x;
-    this.offsetY = n.offsetTop - y;
+    /*--------------------------------------------------------
+    Dragging Nodes */
+    beginNodeDrag: function(n, x, y) {
+        if (NEditor.dragMode != 0) return;
 
-    window.addEventListener("mousemove", NEditor.onNodeDragMouseMove);
-    window.addEventListener("mouseup", NEditor.onNodeDragMouseUp);
-};
+        NEditor.dragMode = 1;
+        NEditor.dragItem = n;
+        this.offsetX = n.offsetLeft - x;
+        this.offsetY = n.offsetTop - y;
 
-NEditor.onNodeDragMouseUp = function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    NEditor.dragItem = null;
-    NEditor.dragMode = 0;
+        window.addEventListener("mousemove", NEditor.onNodeDragMouseMove);
+        window.addEventListener("mouseup", NEditor.onNodeDragMouseUp);
+    },
 
-    window.removeEventListener("mousemove", NEditor.onNodeDragMouseMove);
-    window.removeEventListener("mouseup", NEditor.onNodeDragMouseUp);
-};
+    onNodeDragMouseUp: function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        NEditor.dragItem = null;
+        NEditor.dragMode = 0;
 
-NEditor.onNodeDragMouseMove = function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (NEditor.dragItem) {
-        NEditor.dragItem.style.left = e.pageX + NEditor.offsetX + "px";
-        NEditor.dragItem.style.top = e.pageY + NEditor.offsetY + "px";
-        NEditor.dragItem.ref.updatePaths();
-    }
-};
+        window.removeEventListener("mousemove", NEditor.onNodeDragMouseMove);
+        window.removeEventListener("mouseup", NEditor.onNodeDragMouseUp);
+    },
 
-/*--------------------------------------------------------
-Dragging Paths */
-NEditor.beginConnDrag = function(path) {
-    if (NEditor.dragMode != 0) return;
+    onNodeDragMouseMove: function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (NEditor.dragItem) {
+            NEditor.dragItem.style.left = e.pageX + NEditor.offsetX + "px";
+            NEditor.dragItem.style.top = e.pageY + NEditor.offsetY + "px";
+            NEditor.dragItem.ref.updatePaths();
+        }
+    },
 
-    NEditor.dragMode = 2;
-    NEditor.dragItem = path;
-    NEditor.startPos = path.output.getPos();
+    /*--------------------------------------------------------
+    Dragging Paths */
+    beginConnDrag: function(path) {
+        if (NEditor.dragMode != 0) return;
 
-    NEditor.setCurveColor(path.path, false);
-    window.addEventListener("click", NEditor.onConnDragClick);
-    window.addEventListener("mousemove", NEditor.onConnDragMouseMove);
-};
+        NEditor.dragMode = 2;
+        NEditor.dragItem = path;
+        NEditor.startPos = path.output.getPos();
 
-NEditor.endConnDrag = function() {
-    NEditor.dragMode = 0;
-    NEditor.dragItem = null;
+        NEditor.setCurveColor(path.path, false);
+        window.addEventListener("click", NEditor.onConnDragClick);
+        window.addEventListener("mousemove", NEditor.onConnDragMouseMove);
+    },
 
-    window.removeEventListener("click", NEditor.onConnDragClick);
-    window.removeEventListener("mousemove", NEditor.onConnDragMouseMove);
-};
+    endConnDrag: function() {
+        NEditor.dragMode = 0;
+        NEditor.dragItem = null;
 
-NEditor.onConnDragClick = function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    NEditor.dragItem.output.removePath(NEditor.dragItem);
-    NEditor.endConnDrag();
-};
+        window.removeEventListener("click", NEditor.onConnDragClick);
+        window.removeEventListener("mousemove", NEditor.onConnDragMouseMove);
+    },
 
-NEditor.onConnDragMouseMove = function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    if (NEditor.dragItem)
-        NEditor.setQCurveD(
-            NEditor.dragItem.path,
-            NEditor.startPos.x,
-            NEditor.startPos.y,
-            e.pageX,
-            e.pageY
-        );
-};
+    onConnDragClick: function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        NEditor.dragItem.output.removePath(NEditor.dragItem);
+        NEditor.endConnDrag();
+    },
 
-/*--------------------------------------------------------
-Connection Event Handling */
-NEditor.onOutputClick = function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    var path = e.target.parentNode.ref.addPath();
+    onConnDragMouseMove: function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        if (NEditor.dragItem)
+            NEditor.setQCurveD(
+                NEditor.dragItem.path,
+                NEditor.startPos.x,
+                NEditor.startPos.y,
+                e.pageX,
+                e.pageY
+            );
+    },
 
-    NEditor.beginConnDrag(path);
-};
+    /*--------------------------------------------------------
+    Connection Event Handling */
+    onOutputClick: function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var path = e.target.parentNode.ref.addPath();
 
-NEditor.onInputClick = function(e) {
-    e.stopPropagation();
-    e.preventDefault();
-    var o = this.parentNode.ref;
+        NEditor.beginConnDrag(path);
+    },
 
-    switch (NEditor.dragMode) {
-        case 2: //Path Drag
-            o.applyPath(NEditor.dragItem);
-            NEditor.endConnDrag();
-            break;
-        case 0: //Not in drag mode
-            var path = o.clearPath();
-            if (path != null) NEditor.beginConnDrag(path);
-            break;
-    }
+    onInputClick: function(e) {
+        e.stopPropagation();
+        e.preventDefault();
+        var o = this.parentNode.ref;
+
+        switch (NEditor.dragMode) {
+            case 2: //Path Drag
+                o.applyPath(NEditor.dragItem);
+                NEditor.endConnDrag();
+                break;
+            case 0: //Not in drag mode
+                var path = o.clearPath();
+                if (path != null) NEditor.beginConnDrag(path);
+                break;
+        }
+    },
+
 };
 
 //###########################################################################
