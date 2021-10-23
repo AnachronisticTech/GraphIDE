@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "@projectstorm/react-diagrams": "^6.6.1",
+    "babel-cli": "^6.26.0",
+    "babel-preset-react-app": "^3.1.2",
+    "java-method-parser": "^0.4.8"
+  },
+  "devDependencies": {
+    "@types/node": "^16.11.4",
+    "java-parser": "^2.0.0"
+  }
+}
