@@ -5,6 +5,62 @@
     <script src="NEditor.js"></script>
     <script>
         window.addEventListener("load", function(e) {
+
+            //let goNode = new NEditor.Node("FizzBuzzManager::go");
+            //let goIn1 = goNode.addInput("from : int");
+            //let goIn2 = goNode.addInput("to : int");
+            //let goOut = goNode.addOutput("ArrayList<Integer>");
+            //goNode.setPosition(350, 250);
+
+            let mainFunction = new NEditor.Node("FizzBuzz::main");
+            mainFunction.addInput("public static void main(String[] args) {");
+            mainFunction.addOutput("  FizzBuzzManager fizzBuzzManager = new FizzBuzzManager();");
+            let sCall = mainFunction.addOutputAt("  System.out.println(fizzBuzzManager.go@(1, 50));");
+            mainFunction.addReturn("}");
+            mainFunction.setPosition(20, 20);
+
+            let goFunction = new NEditor.Node("FizzBuzzManager::go");
+            let goIn = goFunction.addInput("public List<Integer> go(int from, int to) {");
+            goFunction.addOutput("    List<Integer> list = new ArrayList<>();");
+            goFunction.addReturn("    for(int i = from; i <= to; i++) {");
+            goFunction.addReturn("        if(i % 3 == 0 && i % 5 == 0 && i % 15 != 0) {");
+            let addOut = goFunction.addOutput("            list.add(i);");
+            goFunction.addReturn("        }");
+            goFunction.addReturn("    }");
+            let goOut = goFunction.addOutput("    return list;");
+            goFunction.addReturn("}");
+            goFunction.setPosition(200, 170);
+
+            let sysout = new NEditor.Node("java.io.PrintStream::println(String)");
+            let sysoutIn = sysout.addInput("x : Object");
+            sysout.addReturn("void");
+            sysout.setPosition(650, 330);
+
+            let add = new NEditor.Node("java.util.List::add");
+            let addIn = add.addInput("x : Object");
+            //sysout.addReturn("void");
+            add.setPosition(650, 260);
+
+            // let sysout = new NEditor.Node("java.io.PrintStream::println(String)");
+            // let sysoutIn = sysout.addInput("x : Object");
+            // sysout.addReturn("void");
+            // sysout.setPosition(550, 400);
+
+            //sCall.connectTo(goIn1);
+            //sCall.connectTo(goIn2);
+            sCall.connectTo(goIn);
+            goOut.connectTo(sysoutIn);
+            addOut.connectTo(addIn);
+
+
+            //FizzBuzzManager fizzBuzzManager = new FizzBuzzManager();
+
+            //public static void main(String[] args) {
+            //    FizzBuzzManager fizzBuzzManager = new FizzBuzzManager();
+            //    System.out.println(fizzBuzzManager.go(1, 50));
+            //}
+
+            /*
             var n4 = new NEditor.Node("Compile Results");
             var n4i1 = n4.addInput("Input A");
             var n4i2 = n4.addInput("Input B");
@@ -42,22 +98,22 @@
 
             var n6 = new NEditor.Node("The User");
             n6.addOutput("1 dollar");
-            n6.setPosition(500, 500);
+            n6.setPosition(500, 500);*/
 
         });
     </script>
 </head>
 
-<body>
+<body style: b>
 
     <svg id="connsvg"></svg>
 
-    <p style="color:#a0a0a0; bottom:1px; position:absolute">
+    <!--<p style="color:#a0a0a0; bottom:1px; position:absolute">
         <i style="color:lime;">Instructions</i><br> - Click on an output connecting dots to start a new connection.<br> - When new connection is made, click on an input connecting dot to complete connection.<br> - Click and hold node title bars to drag
         them around.
 
         <br><br>&copy; 2016 Sketchpunk Labs;
-    </p>
+    </p>-->
 
 
 </body>
