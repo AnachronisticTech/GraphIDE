@@ -2,46 +2,46 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="NEditor.css">
-    <script src="NEditor.js"></script>
+    <script src="Refactor.js"></script>
     <script>
         window.addEventListener("load", function(e) {
 
-            //let goNode = new NEditor.Node("FizzBuzzManager::go");
+            //let goNode = new Node("FizzBuzzManager::go");
             //let goIn1 = goNode.addInput("from : int");
             //let goIn2 = goNode.addInput("to : int");
             //let goOut = goNode.addOutput("ArrayList<Integer>");
             //goNode.setPosition(350, 250);
 
-            let mainFunction = new NEditor.Node("FizzBuzz::main");
+            let mainFunction = new Node("FizzBuzz::main");
             mainFunction.addInput("public static void main(String[] args) {");
             mainFunction.addOutput("  FizzBuzzManager fizzBuzzManager = new FizzBuzzManager();");
             let sCall = mainFunction.addOutputAt("  System.out.println(fizzBuzzManager.go@(1, 50));");
             mainFunction.addReturn("}");
             mainFunction.setPosition(20, 20);
 
-            let goFunction = new NEditor.Node("FizzBuzzManager::go");
+            let goFunction = new Node("FizzBuzzManager::go");
             let goIn = goFunction.addInput("public List<Integer> go(int from, int to) {");
             goFunction.addOutput("    List<Integer> list = new ArrayList<>();");
             goFunction.addReturn("    for(int i = from; i <= to; i++) {");
             goFunction.addReturn("        if(i % 3 == 0 && i % 5 == 0 && i % 15 != 0) {");
-            let addOut = goFunction.addOutput("            list.add(i);");
+            let addOut = goFunction.addOutputAt("            list.add@(i);");
             goFunction.addReturn("        }");
             goFunction.addReturn("    }");
             let goOut = goFunction.addOutput("    return list;");
             goFunction.addReturn("}");
             goFunction.setPosition(200, 170);
 
-            let sysout = new NEditor.Node("java.io.PrintStream::println(String)");
+            let sysout = new Node("java.io.PrintStream::println(String)");
             let sysoutIn = sysout.addInput("x : Object");
             sysout.addReturn("void");
             sysout.setPosition(650, 330);
 
-            let add = new NEditor.Node("java.util.List::add");
+            let add = new Node("java.util.List::add");
             let addIn = add.addInput("x : Object");
             //sysout.addReturn("void");
             add.setPosition(650, 260);
 
-            // let sysout = new NEditor.Node("java.io.PrintStream::println(String)");
+            // let sysout = new Node("java.io.PrintStream::println(String)");
             // let sysoutIn = sysout.addInput("x : Object");
             // sysout.addReturn("void");
             // sysout.setPosition(550, 400);
@@ -61,13 +61,13 @@
             //}
 
             /*
-            var n4 = new NEditor.Node("Compile Results");
+            var n4 = new Node("Compile Results");
             var n4i1 = n4.addInput("Input A");
             var n4i2 = n4.addInput("Input B");
             n4.setPosition(700, 180);
 
 
-            var n3 = new NEditor.Node("Some Process");
+            var n3 = new Node("Some Process");
             var n3i1 = n3.addInput("Input");
             var n3o1 = n3.addOutput("Output");
             n3.setPosition(300, 50);
@@ -76,7 +76,7 @@
             n3o1.connectTo(n4i2);
 
 
-            var n2 = new NEditor.Node("Some Other Process");
+            var n2 = new Node("Some Other Process");
             var n2i1 = n2.addInput("Input");
             var n2o1 = n2.addOutput("Output");
             n2.setPosition(300, 300);
@@ -85,18 +85,18 @@
             n2o1.connectTo(n4i1);
 
 
-            var n1 = new NEditor.Node("Starting Node");
+            var n1 = new Node("Starting Node");
             var n1o1 = n1.addOutput("Output");
             n1.setPosition(50, 200);
 
             n1o1.connectTo(n2i1);
             n1o1.connectTo(n3i1);
 
-            var n5 = new NEditor.Node("SketchPunk Labs");
+            var n5 = new Node("SketchPunk Labs");
             n5.addInput("Donate :)");
             n5.setPosition(700, 500);
 
-            var n6 = new NEditor.Node("The User");
+            var n6 = new Node("The User");
             n6.addOutput("1 dollar");
             n6.setPosition(500, 500);*/
 

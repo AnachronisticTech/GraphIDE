@@ -23,7 +23,7 @@ NEditor.offsetX = 0; //OffsetX for dragging nodes
 NEditor.offsetY = 0; //OffsetY for dragging nodes
 NEditor.svg = null; //SVG where the line paths are drawn.
 
-NEditor.pathColor = "#ff0000";
+NEditor.pathColor = "#999999";
 NEditor.pathColorA = "#86d530";
 NEditor.pathWidth = 2;
 NEditor.pathDashArray = "20,5,5,5,5,5";
@@ -383,6 +383,15 @@ NEditor.InlineCodeConnector.prototype.removePath = NEditor.Connector.prototype.r
 NEditor.InlineCodeConnector.prototype.connectTo = NEditor.Connector.prototype.connectTo;
 NEditor.InlineCodeConnector.prototype.applyPath = NEditor.Connector.prototype.applyPath;
 NEditor.InlineCodeConnector.prototype.clearPath = NEditor.Connector.prototype.clearPath;
+
+NEditor.ReturnConnector.prototype.getPos = NEditor.Connector.prototype.getPos;
+NEditor.ReturnConnector.prototype.resetState = NEditor.Connector.prototype.resetState;
+NEditor.ReturnConnector.prototype.updatePaths = NEditor.Connector.prototype.updatePaths;
+NEditor.ReturnConnector.prototype.addPath = NEditor.Connector.prototype.addPath;
+NEditor.ReturnConnector.prototype.removePath = NEditor.Connector.prototype.removePath;
+NEditor.ReturnConnector.prototype.connectTo = NEditor.Connector.prototype.connectTo;
+NEditor.ReturnConnector.prototype.applyPath = NEditor.Connector.prototype.applyPath;
+NEditor.ReturnConnector.prototype.clearPath = NEditor.Connector.prototype.clearPath;
 
 //###########################################################################
 // Node Object
