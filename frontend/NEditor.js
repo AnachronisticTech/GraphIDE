@@ -3,6 +3,15 @@
 
 //Copyright 2016 Sketchpunk Labs
 
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
 //###########################################################################
 //Main Static Object
 //###########################################################################
@@ -195,6 +204,7 @@ NEditor.onInputClick = function(e) {
 //Connector UI Object. Ideally this should be an abstract class as a base for an output and input class, but save time
 //I wrote this object to handle both types. Its a bit hokey but if it becomes a problem I'll rewrite it in a better OOP way.
 NEditor.Connector = function(pElm, isInput, name) {
+    name = escapeHtml(name);
     this.name = name;
     this.root = document.createElement("li");
     this.dot = document.createElement("i");
@@ -207,6 +217,61 @@ NEditor.Connector = function(pElm, isInput, name) {
     //Create Elements
     pElm.appendChild(this.root);
     this.root.appendChild(this.dot);
+    this.root.appendChild(this.label);
+
+    //Define the Elements
+    this.root.className = (isInput) ? "Input" : "Output";
+    this.root.ref = this;
+    this.label.innerHTML = name;
+    this.dot.innerHTML = "&nbsp;";
+
+    this.dot.addEventListener("click", (isInput) ? NEditor.onInputClick : NEditor.onOutputClick);
+};
+
+NEditor.InlineCodeConnector = function(pElm, isInput, name) {
+    name = escapeHtml(name);
+    this.name = name;
+    this.root = document.createElement("li");
+    this.dot = document.createElement("i");
+    this.label1 = document.createElement("span");
+    this.label2 = document.createElement("span");
+
+    //Input/Output Specific values
+    if (isInput) this.OutputConn = null; //Input can only handle a single connection.
+    else this.paths = []; //Outputs can connect to as many inputs is needed
+
+    //Create Elements
+    pElm.appendChild(this.root);
+    this.root.appendChild(this.label1);
+    this.root.appendChild(this.dot);
+    this.root.appendChild(this.label2);
+
+    //Define the Elements
+    this.root.className = (isInput) ? "Input" : "Output";
+    this.root.ref = this;
+    this.label1.innerHTML = name.slice(0, name.indexOf("@"));
+    this.label1.style.paddingRight = "0.5em";
+    this.label2.innerHTML = name.slice(name.indexOf("@") + 1);
+    this.dot.innerHTML = "&nbsp;";
+    this.dot.className = "inline";
+
+    this.dot.addEventListener("click", (isInput) ? NEditor.onInputClick : NEditor.onOutputClick);
+};
+
+NEditor.ReturnConnector = function(pElm, isInput, name) {
+    name = escapeHtml(name);
+    this.name = name;
+    this.root = document.createElement("li");
+    this.dot = document.createElement("i");
+    this.label = document.createElement("span");
+
+    //Input/Output Specific values
+    if (isInput) this.OutputConn = null; //Input can only handle a single connection.
+    else this.paths = []; //Outputs can connect to as many inputs is needed
+
+    //Create Elements
+    pElm.appendChild(this.root);
+    //this.root.appendChild(this.dot);
     this.root.appendChild(this.label);
 
     //Define the Elements
@@ -310,6 +375,23 @@ NEditor.Connector.prototype.clearPath = function() {
     }
 }
 
+NEditor.InlineCodeConnector.prototype.getPos = NEditor.Connector.prototype.getPos;
+NEditor.InlineCodeConnector.prototype.resetState = NEditor.Connector.prototype.resetState;
+NEditor.InlineCodeConnector.prototype.updatePaths = NEditor.Connector.prototype.updatePaths;
+NEditor.InlineCodeConnector.prototype.addPath = NEditor.Connector.prototype.addPath;
+NEditor.InlineCodeConnector.prototype.removePath = NEditor.Connector.prototype.removePath;
+NEditor.InlineCodeConnector.prototype.connectTo = NEditor.Connector.prototype.connectTo;
+NEditor.InlineCodeConnector.prototype.applyPath = NEditor.Connector.prototype.applyPath;
+NEditor.InlineCodeConnector.prototype.clearPath = NEditor.Connector.prototype.clearPath;
+
+NEditor.ReturnConnector.prototype.getPos = NEditor.Connector.prototype.getPos;
+NEditor.ReturnConnector.prototype.resetState = NEditor.Connector.prototype.resetState;
+NEditor.ReturnConnector.prototype.updatePaths = NEditor.Connector.prototype.updatePaths;
+NEditor.ReturnConnector.prototype.addPath = NEditor.Connector.prototype.addPath;
+NEditor.ReturnConnector.prototype.removePath = NEditor.Connector.prototype.removePath;
+NEditor.ReturnConnector.prototype.connectTo = NEditor.Connector.prototype.connectTo;
+NEditor.ReturnConnector.prototype.applyPath = NEditor.Connector.prototype.applyPath;
+NEditor.ReturnConnector.prototype.clearPath = NEditor.Connector.prototype.clearPath;
 
 //###########################################################################
 // Node Object
@@ -345,6 +427,18 @@ NEditor.Node.prototype.addInput = function(name) {
 
 NEditor.Node.prototype.addOutput = function(name) {
     var o = new NEditor.Connector(this.eList, false, name);
+    this.Outputs.push(o);
+    return o;
+}
+
+NEditor.Node.prototype.addOutputAt = function(name) {
+    var o = new NEditor.InlineCodeConnector(this.eList, false, name);
+    this.Outputs.push(o);
+    return o;
+}
+
+NEditor.Node.prototype.addReturn = function(name) {
+    var o = new NEditor.ReturnConnector(this.eList, false, name);
     this.Outputs.push(o);
     return o;
 }

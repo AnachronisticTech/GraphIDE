@@ -39,6 +39,7 @@ svg {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
+    font-family: monospace;
 }
 
 .NodeContainer>ul {
@@ -57,6 +58,7 @@ svg {
     padding-left: 1em;
     padding-right: 1em;
     color: white;
+    font-family: monospace;
 }
 
 .NodeContainer>ul>li>i {
@@ -78,12 +80,19 @@ svg {
 }
 
 .NodeContainer>ul>li.Output {
-    text-align: right;
+    /* text-align: right; */
+    font-family: monospace;
+    white-space: pre;
 }
 
 .NodeContainer>ul>li.Output>i {
     right: -0.25em;
     top: 0.4em;
+}
+
+.NodeContainer>ul>li.Output>i.inline {
+    right: auto;
+    top: 0.25em;
 }
 
 .NodeContainer>ul>li.Active>i {

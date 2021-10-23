@@ -1,8 +1,26 @@
-import { readdir } from "fs/promises";
-import { readFileSync } from "fs";
-const javaMethodParser = require("./JAVA_PARSER.js");
+import { readdir } from "fs/promises"
+import { readFileSync } from "fs"
+import { FunctionCall, SourceClass, SourceFunction } from "./LanguageConstructs"
+const javaMethodParser = require("./JAVA_PARSER.js")
 
-class BaseAnalyzer {
+interface Analyzer {
+    classes: SourceClass[]
+    functionCalls: FunctionCall[]
+
+    analyze(directory: string, onComplete: () => void): void
+}
+
+class BaseAnalyzer implements Analyzer {
+    classes: SourceClass[] = []
+    functionCalls: FunctionCall[] = []
+
+    analyze(
+        directory: string,
+        onComplete: () => void = function() {}
+    ) {
+        throw new Error("Analyzer must override BaseAnalyzer.analyze(directory: string)")
+    }
+
     protected static async getFilePathsFromSourceDirectory(
         directory: string,
         callback: (_: string[]) => void
@@ -21,23 +39,44 @@ class BaseAnalyzer {
         }
     }
 
-    static analyzeDirectory(
+    protected static analyzeDirectory(
         directory: string,
-        parseOperation: (_: string) => void = function(_) {}
+        parseOperation: (_: string) => void = function(_) {},
+        onComplete: () => void = function() {}
     ) {
         this.getFilePathsFromSourceDirectory(directory, filePaths => {
             for (let filePath of filePaths) {
                 let contents = this.contentsOfFileAt(filePath)
                 parseOperation(contents)
             }
+            onComplete()
         })
     }
 }
 
 export class JavaAnalyzer extends BaseAnalyzer {
-    static analyze(directory: string) {
-        this.analyzeDirectory(directory, fileContents => {
-            console.log(JSON.stringify(javaMethodParser(fileContents)))
-        })
+    analyze(
+        directory: string,
+        onComplete: () => void = function() {}
+    ) {
+        BaseAnalyzer.analyzeDirectory(
+            directory, 
+            fileContents => {
+                let parsedClass = javaMethodParser(fileContents)
+                let sourceClass = new SourceClass()
+                sourceClass.name = parsedClass["name"]
+                sourceClass.functions = parsedClass["methods"].map(method => {
+                    let sourceFunction = new SourceFunction()
+                    sourceFunction.name = method["name"]
+                    sourceFunction.parameters = method["args"]
+                        .map(param => [param["name"], param["type"]])
+                    // MARK implement sourceFunction.calls here
+                    sourceFunction.output = method["returnType"]
+                    return sourceFunction
+                })
+                this.classes.push(sourceClass)
+            },
+            onComplete
+        )
     }
 }
