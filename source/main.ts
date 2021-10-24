@@ -6,4 +6,6 @@
 //    console.log(analyzer.classes)
 //})
 
-require("./parse_file.js").parseFile("./FizzBuzzProject/FizzBuzzManager.java");
+import parseFile from './parse_file';
+
+console.log(parseFile("./FizzBuzzProject/FizzBuzzManager.java"));
